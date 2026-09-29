@@ -30,10 +30,10 @@ const shot = async name => { await page.screenshot({ path: new URL(`${String(++s
 const log = (...a) => console.log('[play]', ...a);
 
 async function waitState(s, ms = 8000) { await page.waitForFunction(st => window.__NT.state === st, s, { timeout: ms }); }
-async function skipDialog(shotName) {
+async function skipDialog(shotName, every) {
   let guard = 0; let first = true;
   while ((await NT()).state === 'dialog' && guard++ < 60) {
-    if (first && shotName) { await frames(40); await shot(shotName); first = false; }
+    if ((first || every) && shotName) { await frames(60); await shot(shotName + (every ? '-p' + guard : '')); first = false; }
     await press('z'); await frames(3);
   }
 }
@@ -77,13 +77,26 @@ async function fight(shotName) {
 async function interact(dir) { await face(dir); await press('z'); await frames(3); }
 async function clueSequence(choiceIdx, tag) {
   await waitState('banner'); await frames(30); await shot(`${tag}-clue-banner`);
-  await waitState('dialog'); await skipDialog(`${tag}-clue-text`);
+  await waitState('dialog'); await skipDialog(`${tag}-clue-text`, true);
   await pickChoice(choiceIdx, `${tag}-choice`);
   await waitState('dialog', 4000); await skipDialog();
   await page.waitForFunction(() => window.__NT.state === 'dialog' && window.__NT.dlg, null, { timeout: 8000 }); // next room intro
 }
 
 process.on('unhandledRejection', async e => { console.error('FAIL:', e.message); try { console.error('STATE:', JSON.stringify(await NT())); await shot('FAILURE'); } catch (_) {} process.exit(1); });
+
+// ---- Text audit: every dialog line must fit 4 rows of 28 chars, every choice label 26 chars
+const audit = await page.evaluate(() => {
+  const N = window.__NT, bad = [];
+  const lines = [...N.INTRO];
+  for (const r of Object.values(N.ROOMS)) { for (const k of ['intro', 'cleared', 'solved', 'clue', 'pick']) if (r[k]) lines.push(...r[k]); if (r.locked) lines.push(r.locked); for (const o of r.objects) if (o.lines) lines.push(...o.lines); if (r.label && r.label.length > 26) bad.push('label: ' + r.label); }
+  for (const j of N.JOKES) { lines.push(...j.response); if (j.label.length > 26) bad.push('label: ' + j.label); }
+  for (const l of lines) { const n = N.wrap(l, 28).length; if (n > 4) bad.push(n + ' rows: ' + l); }
+  for (const card of N.TREASURE_CARDS) for (const l of card) if (l.length > 24) bad.push('card: ' + l);
+  return { count: lines.length, bad };
+});
+log('audited', audit.count, 'dialog lines');
+if (audit.bad.length) { console.error('TEXT OVERFLOW:\n' + audit.bad.join('\n')); process.exit(1); }
 
 // ---- Title + intro
 await frames(10); await shot('title');

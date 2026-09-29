@@ -24,7 +24,7 @@ game in days, not weeks. This doc is the single source of truth for what we are 
 | Runtime | Single-page web app: `index.html` + `game.js` + `style.css`. No build step. |
 | Rendering | HTML5 `<canvas>` at an internal 256×240 resolution (NES/SNES-like), upscaled with `image-rendering: pixelated`. |
 | Art | Hand-authored pixel sprites defined as text grids in `game.js`. Tiles drawn procedurally. |
-| Font | "Press Start 2P" (Google Fonts) with monospace fallback. |
+| Font | "Press Start 2P" bundled locally in `fonts/` (SIL OFL) so the game works offline; monospace fallback. |
 | Audio | Web Audio API synthesized beeps (punch, hit, bell, clue jingle, fanfare). Unlocked on first tap. |
 | Input | Keyboard (arrows / WASD, Z or Space = A, X or Shift = B) and touch overlay buttons. |
 | Hosting | GitHub Pages from this repo. Add to Home Screen gives an icon + full-screen play (`manifest.json`, apple meta tags). |
@@ -91,6 +91,7 @@ Rooms 2–4 can be played in any order. The choice text after each clue lists th
 - [x] Touch controls that work with two thumbs at once.
 - [x] Full-screen on iPhone via Add to Home Screen.
 - [x] Sound effects.
+- [x] Dialog auto-paginates; the test audits every line so nothing overflows the box.
 - [ ] Optional: background music loop, more enemy types, animations for objects.
 
 ## 7. Test plan
