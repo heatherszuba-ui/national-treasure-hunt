@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>National Treasure Hunt</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Treasure Hunt">
+<meta name="theme-color" content="#000000">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon.png">
+<link rel="icon" href="icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="stage">
+  <canvas id="c" width="256" height="240"></canvas>
+</div>
+<div id="pad">
+  <div id="dpad">
+    <button class="btn dir" data-k="up" aria-label="Up">&#9650;</button>
+    <button class="btn dir" data-k="left" aria-label="Left">&#9664;</button>
+    <button class="btn dir" data-k="right" aria-label="Right">&#9654;</button>
+    <button class="btn dir" data-k="down" aria-label="Down">&#9660;</button>
+  </div>
+  <div id="ab">
+    <button class="btn act" data-k="b" aria-label="B">B</button>
+    <button class="btn act" data-k="a" aria-label="A">A</button>
+  </div>
+</div>
+<script src="game.js"></script>
+</body>
+</html>
