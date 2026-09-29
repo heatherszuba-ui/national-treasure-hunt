@@ -120,11 +120,16 @@ for (const k of ['goon', 'shaw', 'ian', 'hero']) { const s = SPR[k]; s.white = {
 // sunglasses for goons: overlay 
 const GLASSES = spr(['gg.gg', 'gg.gg'], { g: '#000' });
 
-const DOG_ROWS = [
-  '................', '...kk...........', '..bbbb..........', '..bWbbbbbbbbb...', '.bbbbbbbbbbbbb..',
-  '.bbbbbbbbbbbbbb.', '..bbbbbbbbbbbb..', '...bb.....bb....', '...bb.....bb....', '...kk.....kk....'];
-SPR.nubnub = spr(DOG_ROWS, { k: '#3a2a1a', b: '#c8975a', W: '#000' });
-SPR.dumbledore = spr(DOG_ROWS.map((r, i) => i >= 4 && i <= 6 ? r.replace(/b/g, (m, o) => o < 4 ? 'w' : 'b') : r), { k: '#333', b: '#9a9a9a', w: '#eeeeee', W: '#000' });
+// Nub Nub: vizsla (rust red, sleek, floppy ear). Dumbledore: tricolor Australian shepherd.
+SPR.nubnub = spr([
+  '................', '..rrrr..........', '.rkrrrE.........', '.rrrrrE......r..', 'krrrrrErrrrrrr..',
+  '.rrrrrrrrrrrrr..', '..rrrrrrrrrrrr..', '...rrrrrrrrrr...', '...rr......rr...', '...rr......rr...',
+  '...rr......rr...', '...kk......kk...'], { r: '#b8652c', E: '#8f4a1c', k: '#2a1a10' });
+SPR.dumbledore = spr([
+  '................', '..bcbb..........', '.bcwcbbb........', '.wwwcbbbb.......', 'kwwcbbbbbbbbbbb.',
+  '.wwbbbbbbbbbbbbb', '..wwbbbbbbbbbbb.', '...bbbbbbbbbbb..', '...cc......cc...', '...ww......ww...',
+  '...ww......ww...', '...kk......kk...'], { b: '#1c1c1c', w: '#f2f2f2', c: '#b5773a', k: '#000000' });
+SPR.dumbledoreR = flip(SPR.dumbledore);
 SPR.heart = spr(['.kk.kk.', 'krrkrrk', 'krrrrrk', '.krrrk.', '..krk..', '...k...'], { k: '#5a0a0a', r: '#e33' });
 SPR.heartOff = spr(['.kk.kk.', 'kddkddk', 'kdddddk', '.kdddk.', '..kdk..', '...k...'], { k: '#333', d: '#111' });
 SPR.castle = spr([
@@ -168,9 +173,9 @@ const THEMES = {
   vault: { floor: '#3a3020', floor2: '#332a1c', wall: '#1f1a10', wallDark: '#100c06', carpet: '#7a1e2e', deco: '#f2c14e' },
 };
 const JOKES = [
-  { label: "RUN A 5:30 'EASY' MILE FIRST", response: ["James runs an 'easy' mile at 5:30 pace to think it over.", "HEATHER (by text): JAMES. EASY. DAY.", "JAMES: ...I felt great, though.", "RILEY: Onward, I guess."] },
+  { label: "RUN A 5:30 'EASY' MILE", response: ["James runs an 'easy' mile at 5:30 pace to think it over.", "HEATHER (by text): JAMES. EASY. DAY.", "JAMES: ...I felt great, though.", "RILEY: Onward, I guess."] },
   { label: 'EAT 40 CHICKEN WINGS', response: ['James eats 40 chicken wings in four minutes. A new record.', "RILEY: I'm disgusted. And impressed. Mostly disgusted.", 'JAMES: Champions eat. Let\'s go.'] },
-  { label: 'PLAY LITTLE IRISH FOR A BIT', response: ["James plays 'One Song Glory' on Little Irish.", 'The goons weep. Riley weeps. A single tear rolls down the Declaration.', 'JAMES: Okay. NOW we go.'] },
+  { label: 'PLAY LITTLE IRISH FIRST', response: ["James plays 'One Song Glory' on Little Irish.", 'The goons weep. Riley weeps. A single tear rolls down the Declaration.', 'JAMES: Okay. NOW we go.'] },
 ];
 const MIDDLE = ['hall', 'charlotte', 'trinity'];
 const ROOMS = {
@@ -186,7 +191,7 @@ const ROOMS = {
     intro: ['JAMES: The National Archives. The Declaration is right there.', "RILEY: And so are Ian's goons. Someone's gotta go to prison, Ben.", "JAMES: Nobody's gotta go to prison. I'm gonna punch them."],
     cleared: ['JAMES: Lemon juice... heat... hair dryer... THERE\'S WRITING ON THE BACK!', 'RILEY: You handled the Declaration of Independence with a HAIR DRYER?', 'JAMES: Go look at the case.'],
     locked: 'JAMES: Not yet. Goons first.',
-    clue: ['THE LEGEND WRIT, THE STAIN AFFECTED, THE KEY IN SILENCE UNDETECTED...', "'SHE HIRED A COACH TO MAKE HER FASTER. HE MADE HER HIS WIFE INSTEAD. THE HUNT BEGAN AT AN EASY PACE. IT DID NOT STAY EASY.'", "RILEY: Why can't they just say 'go to this place, here's the treasure, spend it wisely'?", "JAMES: Because it's a riddle, Riley. And I know exactly where it points."],
+    clue: ['THE LEGEND WRIT, THE STAIN AFFECTED, THE KEY IN SILENCE UNDETECTED...', "'SHE HIRED A COACH TO MAKE HER FASTER. HE MADE HER HIS WIFE INSTEAD.'", "'THE HUNT BEGAN AT AN EASY PACE. IT DID NOT STAY EASY.'", "RILEY: Why can't they just say 'go to this place, here's the treasure, spend it wisely'?", "JAMES: Because it's a riddle, Riley. And I know exactly where it points."],
   },
   hall: {
     name: 'INDEPENDENCE HALL', theme: 'hall', type: 'puzzle', label: 'INDEPENDENCE HALL',
@@ -218,7 +223,7 @@ const ROOMS = {
       { kind: 'barrel', x: 4, y: 7, w: 1, h: 1, item: 'lasagna', lines: ['JAMES: LASAGNA. Frozen solid since 1812. Still the best thing on this ship.', 'RILEY: Are you crying?', 'JAMES: No.'] },
       { kind: 'barrel', x: 11, y: 7, w: 1, h: 1, item: 'pipe', lines: ['RILEY: A meerschaum pipe! Ooh, fancy.', "JAMES: That's for later. Keep looking."] },
     ],
-    intro: ['JAMES: The Charlotte. Lost in the Arctic for two hundred years.', "RILEY: The hold is full of barrels. There's a note: 'FIND THE TWO RATIONS THAT WOULD MAKE JAMES GATES WEEP WITH JOY.'", 'JAMES: Only two? Cruel.'],
+    intro: ['JAMES: The Charlotte. Lost in the Arctic for two hundred years.', "RILEY: The hold is full of barrels. And a note...", "'FIND THE TWO RATIONS THAT WOULD MAKE JAMES GATES WEEP WITH JOY.'", 'JAMES: Only two? Cruel.'],
     solved: ['JAMES: Haggis AND lasagna. The Charlotte provides.', 'RILEY: Look, the pipe! There\'s something carved on the stem.'],
     clue: ["'ONE MONTH IN, HE FLEW HER TO IRELAND ON A WHIM. HE CAME HOME WITH THE GIRL AND A GUITAR.'", "'LITTLE IRISH STILL SINGS. SO DOES HE, WHEN HE THINKS NOBODY'S LISTENING.'", 'RILEY: How many guitars does one man need?', 'JAMES: One more. Always one more.'],
   },
@@ -270,7 +275,7 @@ const TREASURE_CARDS = [
   ['JANUARY 6 - 11, 2027', '', 'GRAND CALIFORNIAN', 'HOTEL'],
   ['EVERY RIDE.', 'ALL DAY.', 'AS MANY TIMES AS', 'WE POSSIBLY CAN.'],
   ['NUB NUB AND', 'DUMBLEDORE HAVE', 'APPROVED THIS TRIP.'],
-  ['LOVE, HEATHER', '', "P.S. IT'S STILL AN", 'EASY DAY. SLOW DOWN.'],
+  ['WITH ALL MY LOVE,', '', 'HEATHER'],
   ['THE END', '', 'PRESS A TO', 'PLAY AGAIN'],
 ];
 
@@ -284,14 +289,19 @@ let dlg = null, choice = null, banner = 0, shake = 0, popup = null, sprintT = 0,
 let fadeT = 0, fadeDir = 0, fadeCb = null;
 let treasure = null;
 
-function say(lines, cb) { dlg = { lines, i: 0, ch: 0, cb }; state = 'dialog'; }
+function paginate(lines) {
+  const out = [];
+  for (const line of lines) { const rows = wrap(line, 28); for (let i = 0; i < rows.length; i += 4) out.push(rows.slice(i, i + 4).join(' ')); }
+  return out;
+}
+function say(lines, cb) { dlg = { lines: paginate(lines), i: 0, ch: 0, cb }; state = 'dialog'; }
 function choose(opts, cb) { choice = { opts, sel: 0, cb }; state = 'choice'; }
 function startFade(cb) { fadeDir = 1; fadeT = 0; fadeCb = cb; state = 'fade'; }
 
 function loadRoom(id) {
   roomId = id; room = ROOMS[id];
   player = { x: room.start.x * T, y: room.start.y * T, dir: 'up', anim: 0, hp: 3, inv: 0, punch: 0, kb: null };
-  enemies = room.enemies.map(e => ({ x: e.x * T, y: e.y * T, kind: e.kind, hp: e.kind === 'ian' ? 6 : 3, maxhp: e.kind === 'ian' ? 6 : 3, dir: 'down', anim: 0, flash: 0, kb: null, dead: false, speed: e.kind === 'ian' ? 0.65 : 0.45, wiggle: 0, stun: 0, sx: e.x * T, sy: e.y * T }));
+  enemies = room.enemies.map(e => ({ x: e.x * T, y: e.y * T, kind: e.kind, hp: e.kind === 'ian' ? 8 : 3, maxhp: e.kind === 'ian' ? 8 : 3, dir: 'down', anim: 0, flash: 0, kb: null, dead: false, speed: e.kind === 'ian' ? 0.8 : 0.6, wiggle: 0, stun: 0, sx: e.x * T, sy: e.y * T }));
   objects = room.objects.map(o => Object.assign({}, o, { rx: o.x * T, ry: o.y * T, rw: o.w * T, rh: o.h * T, state: 0 }));
   particles = []; dogs = [];
   room.solvedFlag = false; room.clearedFlag = enemies.length === 0; room.bellCount = 0; room.found = new Set();
@@ -533,7 +543,7 @@ function updatePlay() {
       p.hp--; p.inv = 90; SFX.hurt(); shake = 6;
       const kx = Math.sign(p.x - e.x) || 1, ky = Math.sign(p.y - e.y);
       p.kb = { x: kx * 3, y: ky * 3, t: 8 };
-      e.kb = { x: -kx * 2, y: -ky * 2, t: 8 }; e.stun = 40;
+      e.kb = { x: -kx * 2, y: -ky * 2, t: 8 }; e.stun = 26;
       if (p.hp <= 0) { playerDied(); return; }
     }
   }
@@ -709,14 +719,15 @@ function drawTreasure() {
   ctx.fillStyle = '#1a1a4a'; ctx.fillRect(0, 200, W, 40);
   ctx.save(); ctx.translate(W / 2 - 48, 140); ctx.scale(4, 4); ctx.drawImage(SPR.castle, 0, 0); ctx.restore();
   const card = TREASURE_CARDS[t.card];
-  const big = t.card === 2 || t.card === 1;
+  const big = t.card === 1 || t.card === 2 || t.card === 6;
   card.forEach((l, i) => {
     const isBig = big && i === card.length - 1;
     textO(l, W / 2, 28 + i * 16, isBig ? '#ffd700' : '#fff', isBig ? 12 : 8, 'center');
   });
   if (t.card < TREASURE_CARDS.length - 1 && frame % 30 < 15) text('▼', W - 14, 120, '#ffd700');
   // dogs at the bottom
-  ctx.drawImage(SPR.nubnub, 40, 226 - (Math.floor(frame / 12) % 2)); ctx.drawImage(flip(SPR.dumbledore), 200, 226 - ((Math.floor(frame / 12) + 1) % 2));
+  ctx.save(); ctx.translate(24, 212 - (Math.floor(frame / 12) % 2)); ctx.scale(2, 2); ctx.drawImage(SPR.nubnub, 0, 0); ctx.restore();
+  ctx.save(); ctx.translate(200, 212 - ((Math.floor(frame / 12) + 1) % 2)); ctx.scale(2, 2); ctx.drawImage(SPR.dumbledoreR, 0, 0); ctx.restore();
 }
 
 // ---------------------------------------------------------------- LOOP
@@ -730,5 +741,5 @@ function loop(ts) {
 }
 if (document.fonts && document.fonts.load) document.fonts.load('8px "Press Start 2P"').catch(() => {});
 requestAnimationFrame(loop);
-window.__NT = { SPR, get state() { return state; }, get room() { return roomId; }, get player() { return player; }, get enemies() { return enemies; }, get clues() { return clues; }, get dlg() { return dlg; }, get choice() { return choice; }, setKey, say, ROOMS };
+window.__NT = { SPR, wrap, INTRO, JOKES, TREASURE_CARDS, get state() { return state; }, get room() { return roomId; }, get player() { return player; }, get enemies() { return enemies; }, get clues() { return clues; }, get dlg() { return dlg; }, get choice() { return choice; }, setKey, say, ROOMS };
 })();
