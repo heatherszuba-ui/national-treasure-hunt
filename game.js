@@ -175,7 +175,7 @@ const THEMES = {
 const JOKES = [
   { label: "RUN A 5:30 'EASY' MILE", response: ["James runs an 'easy' mile at 5:30 pace to think it over.", "HEATHER (by text): JAMES. EASY. DAY.", "JAMES: ...I felt great, though.", "RILEY: Onward, I guess."] },
   { label: 'EAT 40 CHICKEN WINGS', response: ['James eats 40 chicken wings in four minutes. A new record.', "RILEY: I'm disgusted. And impressed. Mostly disgusted.", 'JAMES: Champions eat. Let\'s go.'] },
-  { label: 'PLAY LITTLE IRISH FIRST', response: ["James plays 'One Song Glory' on Little Irish.", 'The goons weep. Riley weeps. A single tear rolls down the Declaration.', 'JAMES: Okay. NOW we go.'] },
+  { label: 'PLAY LITTLE IRISH FIRST', response: ["James plays 'One Song Glory' on Little Irish. Full voice. Open mic rules.", 'The goons weep. Riley weeps. A single tear rolls down the Declaration.', 'RILEY: Please tell me you did not just film a singing selfie.', 'JAMES: Posted. Okay. NOW we go.'] },
 ];
 const MIDDLE = ['hall', 'charlotte', 'trinity'];
 const ROOMS = {
@@ -219,13 +219,13 @@ const ROOMS = {
     objects: [
       { kind: 'barrel', x: 3, y: 3, w: 1, h: 1, item: 'rice', lines: ['RILEY: Gluten-free rice cakes.', 'JAMES: Nobody ever wept for rice cakes.'] },
       { kind: 'barrel', x: 7, y: 2, w: 1, h: 1, item: 'haggis', lines: ["JAMES: HAGGIS. Sheep's heart, liver and lungs, boiled in a stomach. PERFECT.", "RILEY: I'm gonna be sick."] },
-      { kind: 'barrel', x: 12, y: 3, w: 1, h: 1, item: 'gunpowder', lines: ['RILEY: Gunpowder. Just... gunpowder.', "JAMES: Don't punch that one."] },
+      { kind: 'barrel', x: 12, y: 3, w: 1, h: 1, item: 'gunpowder', lines: ['RILEY: Gunpowder. A whole keg of it. With a fuse.', "JAMES: Don't punch that one.", 'RILEY: Why would you even SAY that? Now I want you to.'] },
       { kind: 'barrel', x: 4, y: 7, w: 1, h: 1, item: 'lasagna', lines: ['JAMES: LASAGNA. Frozen solid since 1812. Still the best thing on this ship.', 'RILEY: Are you crying?', 'JAMES: No.'] },
       { kind: 'barrel', x: 11, y: 7, w: 1, h: 1, item: 'pipe', lines: ['RILEY: A meerschaum pipe! Ooh, fancy.', "JAMES: That's for later. Keep looking."] },
     ],
     intro: ['JAMES: The Charlotte. Lost in the Arctic for two hundred years.', "RILEY: The hold is full of barrels. And a note...", "'FIND THE TWO RATIONS THAT WOULD MAKE JAMES GATES WEEP WITH JOY.'", 'JAMES: Only two? Cruel.'],
     solved: ['JAMES: Haggis AND lasagna. The Charlotte provides.', 'RILEY: Look, the pipe! There\'s something carved on the stem.'],
-    clue: ["'ONE MONTH IN, HE FLEW HER TO IRELAND ON A WHIM. HE CAME HOME WITH THE GIRL AND A GUITAR.'", "'LITTLE IRISH STILL SINGS. SO DOES HE, WHEN HE THINKS NOBODY'S LISTENING.'", 'RILEY: How many guitars does one man need?', 'JAMES: One more. Always one more.'],
+    clue: ["'ONE MONTH IN, SHE FLEW HIM TO IRELAND ON A WHIM. HE CAME HOME WITH THE GIRL AND A GUITAR.'", "'LITTLE IRISH STILL SINGS. SO DOES HE. OPEN MICS. STAGES. THE CAR. ESPECIALLY THE CAR.'", 'RILEY: He filmed himself singing in the car? For INSTAGRAM?', 'JAMES: Singing selfies, Riley. They were a hit.', 'RILEY: How many guitars does one man need?', 'JAMES: One more. Always one more.'],
   },
   trinity: {
     name: 'TRINITY CHURCH', theme: 'crypt', type: 'combat', label: 'TRINITY CHURCH',
@@ -285,7 +285,7 @@ let frame = 0;
 let roomId = null, room = null, roomCanvas = null;
 let player = null, enemies = [], objects = [], particles = [], dogs = [];
 let visited = new Set(), clues = 0, jokeIdx = 0;
-let dlg = null, choice = null, banner = 0, shake = 0, popup = null, sprintT = 0, deadT = 0;
+let dlg = null, choice = null, banner = 0, shake = 0, popup = null, sprintT = 0, deadT = 0, deadReason = 'fight', flashT = 0;
 let fadeT = 0, fadeDir = 0, fadeCb = null;
 let treasure = null;
 
@@ -415,6 +415,7 @@ function interact(o) {
     spawnText(o.rx + 8, o.ry - 6, 'DONG! ' + room.bellCount + '/10', '#ffd700');
     if (room.bellCount >= 10) { room.solvedFlag = true; setTimeout(() => { say(room.solved, findClue); }, 500); state = 'wait'; }
   } else if (o.kind === 'barrel') {
+    if (o.state && o.item === 'gunpowder') { explode(o); return; }
     if (o.state) { say(['JAMES: Already checked that one.']); return; }
     o.state = 1; SFX.open();
     const good = o.item === 'haggis' || o.item === 'lasagna';
@@ -439,13 +440,23 @@ function respawn() { // hero comes back at full health; enemies keep the damage 
   for (const e of enemies) { if (!e.dead) { e.x = e.sx; e.y = e.sy; e.kb = null; e.flash = 0; e.stun = 0; } }
 }
 function playerDied() {
-  SFX.die(); state = 'dead'; deadT = 70; player.hp = 0;
+  SFX.die(); state = 'dead'; deadT = 70; deadReason = 'fight'; player.hp = 0;
+}
+const EXPLODE_LINES = ['RILEY: You punched the gunpowder.', 'JAMES: I punched the gunpowder.', "RILEY: Someone's gotta go to the hospital, Ben.", 'JAMES: ...Okay. From the top.'];
+function explode(o) {
+  SFX.boom(); tone(50, 0.9, 'sawtooth', 0.2, 0, -30); tone(900, 0.4, 'square', 0.1, 0.05, -800);
+  shake = 40; flashT = 14; player.hp = 0; state = 'dead'; deadT = 100; deadReason = 'explode';
+  const cx = o.rx + 8, cy = o.ry + 8;
+  for (let i = 0; i < 60; i++) { const a = Math.random() * Math.PI * 2, sp = 1 + Math.random() * 3; particles.push({ x: cx, y: cy, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 1, life: 30 + Math.random() * 30, col: ['#ff3', '#f80', '#f33', '#444', '#fff'][i % 5], size: 2 + Math.random() * 4 }); }
+  spawnText(cx, cy - 12, 'KABOOM!', '#f80');
+  o.boom = true; player.gone = true;
 }
 
 // ---------------------------------------------------------------- UPDATE
 function update() {
   frame++;
   if (shake > 0) shake--;
+  if (flashT > 0) flashT--;
   if (popup && --popup.t <= 0) popup = null;
   for (const o of objects) if (o.state > 1) o.state--;
   // fade
@@ -480,7 +491,7 @@ function update() {
       if (--banner <= 0) afterBanner();
       break;
     case 'dead':
-      if (--deadT <= 0) say(["JAMES: ...You're gonna lose.", "JAMES: No. I'm NOT gonna lose."], respawn);
+      if (--deadT <= 0) { if (deadReason === 'explode') say(EXPLODE_LINES, () => loadRoom(roomId)); else say(["JAMES: ...You're gonna lose.", "JAMES: No. I'm NOT gonna lose."], respawn); }
       break;
     case 'treasure':
       updateTreasure(aPress);
@@ -573,7 +584,7 @@ function draw() {
   const ents = [];
   for (const e of enemies) if (!e.dead) ents.push({ y: e.y, f: () => drawEnemy(e) });
   for (const d of dogs) ents.push({ y: d.y, f: () => drawDog(d) });
-  if (state !== 'dead' || deadT % 8 < 4) ents.push({ y: player.y, f: drawPlayer });
+  if (!player.gone && (state !== 'dead' || deadT % 8 < 4)) ents.push({ y: player.y, f: drawPlayer });
   ents.sort((a, b) => a.y - b.y).forEach(e => e.f());
   for (const p of particles) {
     if (p.text) { textO(p.text, Math.round(p.x), Math.round(p.y), p.col, 8, 'center'); }
@@ -587,7 +598,10 @@ function draw() {
   if (state === 'banner') drawBanner();
   drawFade();
 }
-function drawFade() { if (fadeT > 0) { ctx.fillStyle = 'rgba(0,0,0,' + (fadeT / 30) + ')'; ctx.fillRect(0, 0, W, H); } }
+function drawFade() {
+  if (flashT > 0) { ctx.fillStyle = 'rgba(255,240,200,' + (flashT / 14) + ')'; ctx.fillRect(0, 0, W, H); }
+  if (fadeT > 0) { ctx.fillStyle = 'rgba(0,0,0,' + (fadeT / 30) + ')'; ctx.fillRect(0, 0, W, H); }
+}
 function drawPlayer() {
   const p = player;
   if (p.inv > 0 && (p.inv % 6) < 3) return;
@@ -629,6 +643,13 @@ function drawObject(o) {
     ctx.fillStyle = '#e8c878'; ctx.fillRect(x + 13 + sw, y + 5, 2, 15);
     ctx.fillStyle = '#7a5a2a'; ctx.fillRect(x + 8 + sw, y + 22, 16, 3); ctx.fillRect(x + 12 + sw, y + 15, 1, 6);
     ctx.fillStyle = '#3a2a12'; ctx.fillRect(x + 14 + sw, y + 25, 4, 3);
+  } else if (o.kind === 'barrel' && o.item === 'gunpowder') {
+    if (o.boom) { ctx.fillStyle = '#1a1208'; ctx.fillRect(x + 1, y + 3, 14, 11); ctx.fillStyle = '#3a2a10'; ctx.fillRect(x + 4, y + 6, 8, 5); return; }
+    ctx.fillStyle = '#3a3a3a'; ctx.fillRect(x + 2, y + 3, 12, 12);
+    ctx.fillStyle = '#111'; ctx.fillRect(x + 2, y + 5, 12, 1); ctx.fillRect(x + 2, y + 12, 12, 1);
+    ctx.fillStyle = '#d8d8d8'; ctx.fillRect(x + 6, y + 8, 4, 1); ctx.fillRect(x + 7, y + 7, 2, 3);
+    ctx.fillStyle = '#c9a25f'; ctx.fillRect(x + 8, y, 1, 3); ctx.fillRect(x + 9, y - 1, 2, 1);
+    if (frame % 20 < 10) { ctx.fillStyle = '#ff5'; ctx.fillRect(x + 10, y - 2, 2, 2); }
   } else if (o.kind === 'barrel') {
     ctx.fillStyle = '#8a5a2a'; ctx.fillRect(x + 2, y + 1, 12, 14);
     ctx.fillStyle = '#5a3a1a'; ctx.fillRect(x + 2, y + 4, 12, 1); ctx.fillRect(x + 2, y + 11, 12, 1);
@@ -741,5 +762,5 @@ function loop(ts) {
 }
 if (document.fonts && document.fonts.load) document.fonts.load('8px "Press Start 2P"').catch(() => {});
 requestAnimationFrame(loop);
-window.__NT = { SPR, wrap, INTRO, JOKES, TREASURE_CARDS, get state() { return state; }, get room() { return roomId; }, get player() { return player; }, get enemies() { return enemies; }, get clues() { return clues; }, get dlg() { return dlg; }, get choice() { return choice; }, setKey, say, ROOMS };
+window.__NT = { SPR, wrap, INTRO, JOKES, TREASURE_CARDS, get state() { return state; }, get room() { return roomId; }, get player() { return player; }, get enemies() { return enemies; }, get objects() { return objects.map(o => ({ kind: o.kind, item: o.item, state: o.state })); }, get hp() { return player && player.hp; }, get clues() { return clues; }, get dlg() { return dlg; }, get choice() { return choice; }, setKey, say, ROOMS };
 })();
