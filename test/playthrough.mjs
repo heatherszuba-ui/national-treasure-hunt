@@ -21,6 +21,7 @@ await page.evaluate(() => document.fonts.ready);
 const NT = () => page.evaluate(() => ({ state: window.__NT.state, room: window.__NT.room, clues: window.__NT.clues,
   player: window.__NT.player && { x: window.__NT.player.x, y: window.__NT.player.y, hp: window.__NT.player.hp, dir: window.__NT.player.dir },
   enemies: (window.__NT.enemies || []).map(e => ({ x: e.x, y: e.y, hp: e.hp, dead: e.dead })),
+  objects: window.__NT.objects,
   dlgLine: window.__NT.dlg ? window.__NT.dlg.lines[window.__NT.dlg.i] : null,
   choice: window.__NT.choice ? window.__NT.choice.opts.map(o => o.label) : null }));
 const frames = n => page.waitForTimeout(Math.ceil(n * 1000 / 60) + 5);
@@ -120,6 +121,16 @@ for (let i = 0; i < 3; i++) {
     for (let n = 0; n < 10; n++) { await interact('up'); await frames(12); if (n === 4) await shot('hall-bell'); }
     await page.waitForFunction(() => window.__NT.state === 'dialog', null, { timeout: 5000 }); await skipDialog('hall-solved');
   } else if (st.room === 'charlotte') {
+    // open one good barrel first so we can prove the explosion resets it
+    await walkTo(7, 3); await interact('up'); await skipDialog();
+    await walkTo(7, 5); await walkTo(12, 5); await walkTo(12, 4); await interact('up'); await skipDialog('charlotte-keg-warning');
+    await interact('up'); await waitState('dead', 3000); await frames(12); await shot('charlotte-explosion');
+    if ((await NT()).player.hp !== 0) throw new Error('explosion should drain all hearts');
+    await page.waitForFunction(() => window.__NT.state === 'dialog', null, { timeout: 5000 }); await skipDialog('charlotte-exploded');
+    await waitState('play');
+    const after = await NT();
+    if (after.objects.some(o => o.state)) throw new Error('room should reset after explosion');
+    log('explosion reset ok, hp', after.player.hp, 'at', after.player.x, after.player.y);
     await walkTo(3, 4); await interact('up'); await skipDialog('charlotte-wrong-barrel');
     await walkTo(7, 3); await interact('up'); await skipDialog('charlotte-haggis');
     await walkTo(7, 8); await walkTo(4, 8); await interact('up'); await skipDialog();

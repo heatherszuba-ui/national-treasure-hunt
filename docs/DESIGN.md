@@ -66,7 +66,8 @@ TITLE → INTRO dialog → ROOM 1 (Archives)
 ### Room 3 — The Charlotte, ship's hold in the Arctic (puzzle)
 - Hint on entry: "Find the two rations that would make James Gates weep with joy."
 - Five barrels. Open them: haggis and lasagna are correct; the others are gags. Find both → the meerschaum pipe holds the clue.
-- **Clue 3** covers the whirlwind Ireland trip and Little Irish the guitar.
+- The gunpowder keg is a trap: look once and Riley warns you; press A on it again and it explodes, all hearts are lost, and the room restarts from scratch.
+- **Clue 3** covers Heather flying James to Ireland on a whim, Little Irish the guitar, open mics, and the singing selfies.
 
 ### Room 4 — Trinity Church crypt entrance (combat)
 - Shaw and two goons guard the stairs down.
