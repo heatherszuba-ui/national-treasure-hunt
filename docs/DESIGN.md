@@ -8,7 +8,7 @@ game in days, not weeks. This doc is the single source of truth for what we are 
 **Goals**
 - A 10–15 minute top-down 16-bit adventure in the style of *A Link to the Past*.
 - Plays on James's iPhone in Safari, full screen, with on-screen D-pad + A/B buttons.
-- Five rooms set in *National Treasure* movie locations. Every path wins.
+- Six rooms: five *National Treasure* movie locations plus Mr. Miyagi's garden. Every path wins.
 - Clues are personal riddles about James; the hero shouts "IT'S A CLUE!" every time.
 - Ends by revealing the treasure: Disneyland, Jan 6–11 2027, Grand Californian.
 - Heavy on Nic Cage / Riley quotes.
@@ -41,8 +41,8 @@ game in days, not weeks. This doc is the single source of truth for what we are 
 
 ```
 TITLE → INTRO dialog → ROOM 1 (Archives)
-  → clue → CHOICE → next room ... (rooms 2–4 in the order the player chooses)
-  → after all 3 middle clues → FINAL ROOM (boss + chest) → TREASURE reveal → END
+  → clue → CHOICE → next room ... (rooms 2–5 in the order the player chooses)
+  → after all 4 middle clues → FINAL ROOM (boss + chest) → TREASURE reveal → END
 ```
 
 - **Combat room**: goons chase the hero; punch each 3 times. When all are down the clue object unlocks.
@@ -74,16 +74,22 @@ TITLE → INTRO dialog → ROOM 1 (Archives)
 - Beat them → the tombstone inscription is the clue.
 - **Clue 4** covers Flagstaff, 7,000 ft, sub-2:30 delusions, World Championships and Paris 2024.
 
-Rooms 2–4 can be played in any order. The choice text after each clue lists the remaining locations.
+### Room 5 — Okinawa, Miyagi-Do garden (combat + mini-puzzle)
+- Chozen and two thugs guard Mr. Miyagi's garden (pond in the middle, trees in the corners).
+- Beat them (James honks Chozen's nose) → trim the bonsai with six presses of A, alternating WAX ON / WAX OFF.
+- **Clue 5** covers bonsai, the Miyagi/Pat Morita relics, Karate Kid II on in the background, The Goonies, and Willow.
+- Joke choice: "Watch Karate Kid II first" (he's at the drum part).
 
-### Room 5 — Templar treasure chamber beneath Trinity (final)
+Rooms 2–5 can be played in any order. The choice text after each clue lists the remaining locations.
+
+### Room 6 — Templar treasure chamber beneath Trinity (final)
 - Ian Howe (boss, 8 HP, faster than goons) guards the chest.
 - Beat him → Nub Nub and Dumbledore appear beside the chest → open it.
 - **Treasure reveal**: fireworks, castle, and the Disneyland announcement with dates and hotel.
 
 ## 6. Requirements checklist
 
-- [x] Title screen, intro, 5 rooms, ending.
+- [x] Title screen, intro, 6 rooms, ending.
 - [x] Move in 4 directions with collision against walls and objects.
 - [x] Punch combat with knockback, invulnerability frames, enemy defeat.
 - [x] Two distinct puzzles (bell count, barrel search).

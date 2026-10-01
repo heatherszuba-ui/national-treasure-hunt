@@ -114,7 +114,7 @@ let st = await NT(); log('now in', st.room, 'clues', st.clues);
 await skipDialog(`${st.room}-intro`);
 
 // Rooms 2-4 in whatever order the choice produced (first option each time, joke option once)
-for (let i = 0; i < 3; i++) {
+for (let i = 0; i < 4; i++) {
   st = await NT();
   if (st.room === 'hall') {
     await walkTo(7, 3);
@@ -138,8 +138,13 @@ for (let i = 0; i < 3; i++) {
   } else if (st.room === 'trinity') {
     await fight('trinity-fight'); await skipDialog();
     await walkTo(7, 2); await interact('up');
+  } else if (st.room === 'okinawa') {
+    await fight('okinawa-fight'); await skipDialog('okinawa-cleared');
+    await walkTo(4, 2); await walkTo(7, 2); // around the pond
+    for (let n = 0; n < 12 && (await NT()).state === 'play'; n++) { await interact('up'); await frames(10); if (n === 2) await shot('okinawa-bonsai'); }
+    await page.waitForFunction(() => window.__NT.state === 'dialog', null, { timeout: 5000 }); await skipDialog('okinawa-solved');
   }
-  await clueSequence(i === 1 ? 2 : 0, st.room); // 2nd time pick the joke option
+  await clueSequence(i === 3 ? 1 : 0, st.room); // last middle room: pick the joke option
   st = await NT(); log('now in', st.room, 'clues', st.clues);
   await skipDialog(`${st.room}-intro`);
 }

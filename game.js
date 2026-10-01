@@ -115,10 +115,15 @@ SPR.hero = humanoid(PAL_HERO);
 SPR.goon = humanoid(PAL_GOON);
 SPR.shaw = humanoid(PAL_SHAW);
 SPR.ian = humanoid(PAL_IAN);
+const PAL_CHOZEN = { h: '#101010', s: '#e0b48a', e: '#101010', j: '#1c1c2c', w: '#1c1c2c', p: '#1c1c2c', k: '#000000' };
+const PAL_THUG = { h: '#1a1a1a', s: '#d9a877', e: '#101010', j: '#7a6a3a', w: '#e8d8a0', p: '#4a3a2a', k: '#000000' };
+SPR.chozen = humanoid(PAL_CHOZEN);
+SPR.thug = humanoid(PAL_THUG);
 // white versions for hit flash
-for (const k of ['goon', 'shaw', 'ian', 'hero']) { const s = SPR[k]; s.white = {}; for (const d of ['down', 'up', 'right', 'left']) s.white[d] = s[d].map(whiten); }
+for (const k of ['goon', 'shaw', 'ian', 'chozen', 'thug', 'hero']) { const s = SPR[k]; s.white = {}; for (const d of ['down', 'up', 'right', 'left']) s.white[d] = s[d].map(whiten); }
 // sunglasses for goons: overlay 
 const GLASSES = spr(['gg.gg', 'gg.gg'], { g: '#000' });
+const HEADBAND = spr(['rrrrrrrr', 'rrrrrrrr'], { r: '#c8201a' });
 
 // Nub Nub: vizsla (rust red, sleek, floppy ear). Dumbledore: tricolor Australian shepherd.
 SPR.nubnub = spr([
@@ -169,15 +174,17 @@ const THEMES = {
   marble: { floor: '#d8d2c0', floor2: '#cfc8b4', wall: '#7a6f5a', wallDark: '#5a5040', carpet: '#7a1e2e', deco: '#b8b0a0' },
   hall: { floor: '#a97a45', floor2: '#9d6f3e', wall: '#6b3f1f', wallDark: '#4a2a12', carpet: '#8b1e1e', deco: '#c9a25f' },
   ship: { floor: '#6b4a2a', floor2: '#5e4025', wall: '#3e2a16', wallDark: '#2a1c0e', carpet: '#8b1e1e', deco: '#a07a4a', water: '#bfe3f2', water2: '#9fd0e8' },
+  garden: { floor: '#5c9a3c', floor2: '#549036', wall: '#6b4a2a', wallDark: '#4a3018', carpet: '#8b1e1e', deco: '#2e6b1e', water: '#4a8fd8', water2: '#6aa8e8' },
   crypt: { floor: '#585c60', floor2: '#4f5357', wall: '#2e3236', wallDark: '#1e2226', carpet: '#3a2a5e', deco: '#8a8e92' },
   vault: { floor: '#3a3020', floor2: '#332a1c', wall: '#1f1a10', wallDark: '#100c06', carpet: '#7a1e2e', deco: '#f2c14e' },
 };
 const JOKES = [
   { label: "RUN A 5:30 'EASY' MILE", response: ["James runs an 'easy' mile at 5:30 pace to think it over.", "HEATHER (by text): JAMES. EASY. DAY.", "JAMES: ...I felt great, though.", "RILEY: Onward, I guess."] },
   { label: 'EAT 40 CHICKEN WINGS', response: ['James eats 40 chicken wings in four minutes. A new record.', "RILEY: I'm disgusted. And impressed. Mostly disgusted.", 'JAMES: Champions eat. Let\'s go.'] },
+  { label: 'WATCH KARATE KID II FIRST', response: ["James puts on Karate Kid II 'for inspiration' and writes a workout.", "RILEY: You've seen this. You've seen this a hundred times.", 'JAMES: Shh. This is the drum part.', 'Two hours later. Onward.'] },
   { label: 'PLAY LITTLE IRISH FIRST', response: ["James plays 'One Song Glory' on Little Irish. Full voice. Open mic rules.", 'The goons weep. Riley weeps. A single tear rolls down the Declaration.', 'RILEY: Please tell me you did not just film a singing selfie.', 'JAMES: Posted. Okay. NOW we go.'] },
 ];
-const MIDDLE = ['hall', 'charlotte', 'trinity'];
+const MIDDLE = ['hall', 'charlotte', 'trinity', 'okinawa'];
 const ROOMS = {
   archives: {
     name: 'NATIONAL ARCHIVES', theme: 'marble', type: 'combat',
@@ -242,9 +249,25 @@ const ROOMS = {
     locked: 'SHAW: Not so fast.',
     clue: ["'FROM FLAGSTAFF'S THIN AIR HE SENT RUNNERS TO THE WORLD CHAMPIONSHIPS AND THE PARIS OLYMPICS.'", "'HE STILL BELIEVES SUB-2:30 IS EASIER AT 7,000 FEET. IT IS NOT. IT IS NOT, JAMES.'", 'RILEY: Is it easier?', "JAMES: It's 7,000 feet of pure oxygen debt, Riley. It's a DREAM."],
   },
+  okinawa: {
+    name: 'OKINAWA', theme: 'garden', type: 'combat', label: 'OKINAWA, MIYAGI-DO',
+    pick: ['JAMES: Okinawa. Miyagi-Do.', "RILEY: That's not in National Treasure, Ben.", 'JAMES: It is in MY National Treasure.'],
+    map: [
+      '################', '#..T........T..#', '#..............#', '#.....WWWW.....#', '#.....WWWW.....#',
+      '#..............#', '#.T..........T.#', '#..............#', '#..............#', '#.T..........T.#',
+      '#..............#', '#..............#', '#..............#', '################'],
+    start: { x: 7, y: 11 },
+    enemies: [{ x: 7, y: 6, kind: 'chozen' }, { x: 3, y: 4, kind: 'thug' }, { x: 12, y: 4, kind: 'thug' }],
+    objects: [{ kind: 'bonsai', x: 7, y: 1, w: 2, h: 1 }],
+    intro: ["JAMES: Mr. Miyagi's garden. Okinawa. I've seen this place a thousand times.", 'RILEY: A thousand? You watch Karate Kid II while you WORK?', 'JAMES: For inspiration, Riley.', 'CHOZEN: Now you cross me, Gates. Live or die, man?', 'JAMES: ...Punch.'],
+    cleared: ['JAMES: (honk)', 'RILEY: Did you just honk his nose?', 'JAMES: Miyagi-Do. Now, the bonsai. It needs trimming. Wax on. Wax off.'],
+    locked: 'CHOZEN: You think you walk past me? HA!',
+    solved: ['The bonsai is perfect. Something glints in the pot.', "JAMES: 'First learn stand, then learn fly. Nature rule, not mine.'", 'RILEY: Is that from a movie?', "JAMES: It's from ALL the movies, Riley."],
+    clue: ["'HE GROWS BONSAI. HE HOARDS RARE MIYAGI RELICS. HE QUOTES KARATE KID II IN HIS SLEEP.'", "'HEY YOU GUYS! HE LOVES THE GOONIES, WILLOW, AND EVERY DORKY 80s MOVIE EVER MADE.'", 'RILEY: Willow? The one with the baby?', 'JAMES: Elora Danan, Riley. Show some respect.', 'RILEY: Goonies never say die.', 'JAMES: Now THAT is a clue.'],
+  },
   treasure: {
     name: 'TEMPLAR TREASURE', theme: 'vault', type: 'final', label: 'DESCEND BENEATH TRINITY',
-    pick: ['JAMES: Four clues. One left. The treasure is below.', 'RILEY: Hold on, let me take in this moment. This is cool. Is this how you feel all the time?', 'JAMES: Every day, Riley.'],
+    pick: ['JAMES: Five clues. One left. The treasure is below.', 'RILEY: Hold on, let me take in this moment. This is cool. Is this how you feel all the time?', 'JAMES: Every day, Riley.'],
     map: [
       '################', '#GG..........GG#', '#G............G#', '#..............#', '#..............#',
       '#..............#', '#..............#', '#..............#', '#..............#', '#..............#',
@@ -262,7 +285,7 @@ const INTRO = [
   'JAMES GATES: RUNNING COACH. DECATHLETE. PROTECTOR OF HISTORY.',
   '...AND A MAN WHO CANNOT, FOR THE LIFE OF HIM, RUN AN EASY DAY EASY.',
   'TONIGHT A NOTE ARRIVED, TUCKED INSIDE A SWEATY SINGLET:',
-  "'THE TREASURE IS REAL. FIND THE FIVE CLUES. NOBODY'S GOTTA GO TO PRISON.'",
+  "'THE TREASURE IS REAL. FIND THE SIX CLUES. NOBODY'S GOTTA GO TO PRISON.'",
   'JAMES: I know what I have to do.',
   "JAMES: I'm gonna steal the Declaration of Independence.",
   "RILEY: ...Sure. Great. Let's do that.",
@@ -301,7 +324,7 @@ function startFade(cb) { fadeDir = 1; fadeT = 0; fadeCb = cb; state = 'fade'; }
 function loadRoom(id) {
   roomId = id; room = ROOMS[id];
   player = { x: room.start.x * T, y: room.start.y * T, dir: 'up', anim: 0, hp: 3, inv: 0, punch: 0, kb: null };
-  enemies = room.enemies.map(e => ({ x: e.x * T, y: e.y * T, kind: e.kind, hp: e.kind === 'ian' ? 8 : 3, maxhp: e.kind === 'ian' ? 8 : 3, dir: 'down', anim: 0, flash: 0, kb: null, dead: false, speed: e.kind === 'ian' ? 0.8 : 0.6, wiggle: 0, stun: 0, sx: e.x * T, sy: e.y * T }));
+  enemies = room.enemies.map(e => ({ x: e.x * T, y: e.y * T, kind: e.kind, hp: e.kind === 'ian' ? 8 : e.kind === 'chozen' ? 5 : 3, maxhp: e.kind === 'ian' ? 8 : e.kind === 'chozen' ? 5 : 3, dir: 'down', anim: 0, flash: 0, kb: null, dead: false, speed: e.kind === 'ian' ? 0.8 : e.kind === 'chozen' ? 0.7 : 0.6, wiggle: 0, stun: 0, sx: e.x * T, sy: e.y * T }));
   objects = room.objects.map(o => Object.assign({}, o, { rx: o.x * T, ry: o.y * T, rw: o.w * T, rh: o.h * T, state: 0 }));
   particles = []; dogs = [];
   room.solvedFlag = false; room.clearedFlag = enemies.length === 0; room.bellCount = 0; room.found = new Set();
@@ -342,6 +365,10 @@ function renderRoom() {
       g.fillStyle = '#f2c14e'; g.fillRect(x + 2, y + 8, 12, 7); g.fillRect(x + 5, y + 4, 6, 4);
       g.fillStyle = '#fff3b0'; g.fillRect(x + 6, y + 5, 2, 1); g.fillRect(x + 3, y + 9, 2, 1); g.fillRect(x + 10, y + 11, 2, 1);
       g.fillStyle = '#a8801e'; g.fillRect(x + 2, y + 14, 12, 1);
+    } else if (ch === 'T') {
+      g.fillStyle = '#5a3a1a'; g.fillRect(x + 6, y + 9, 4, 7);
+      g.fillStyle = '#2e6b1e'; g.fillRect(x + 2, y + 3, 12, 8); g.fillRect(x + 4, y + 1, 8, 2);
+      g.fillStyle = '#3f8a2a'; g.fillRect(x + 4, y + 3, 5, 3); g.fillRect(x + 3, y + 7, 3, 2);
     } else if (ch === 'X') {
       g.fillStyle = '#7a5230'; g.fillRect(x + 1, y + 2, 14, 13);
       g.fillStyle = '#5a3a1e'; g.fillRect(x + 1, y + 2, 14, 1); g.fillRect(x + 1, y + 8, 14, 1); g.fillRect(x + 1, y + 14, 14, 1); g.fillRect(x + 1, y + 2, 1, 13); g.fillRect(x + 14, y + 2, 1, 13);
@@ -350,7 +377,7 @@ function renderRoom() {
 }
 function tileSolid(tx, ty) {
   if (tx < 0 || ty < 0 || tx >= MW || ty >= MH) return true;
-  return '#PSWGX'.indexOf(room.map[ty][tx]) >= 0;
+  return '#PSWGXT'.indexOf(room.map[ty][tx]) >= 0;
 }
 function rectHit(ax, ay, aw, ah, bx, by, bw, bh) { return ax < bx + bw && ax + aw > bx && ay < by + bh && ay + ah > by; }
 function collides(e) {
@@ -409,6 +436,12 @@ function interact(o) {
     SFX.open(); o.state = 1; clues++;
     setTimeout(() => SFX.fanfare(), 200);
     startFade(() => { treasure = { card: 0, t: 0, fw: [] }; state = 'treasure'; fadeDir = -1; fadeT = 30; });
+  } else if (o.kind === 'bonsai') {
+    if (!room.clearedFlag) { SFX.nope(); say([room.locked]); return; }
+    if (room.solvedFlag) { say(['RILEY: Ben. The tree is DONE.']); return; }
+    room.bellCount++; SFX.blip(); o.state = 8; o.trim = room.bellCount;
+    spawnText(o.rx + 16, o.ry - 6, room.bellCount % 2 ? 'WAX ON' : 'WAX OFF', '#bfffb0');
+    if (room.bellCount >= 6) { room.solvedFlag = true; say(room.solved, findClue); }
   } else if (o.kind === 'bell') {
     if (room.solvedFlag) { say(['RILEY: Ben, that\'s enough bell.']); return; }
     room.bellCount++; SFX.bell(); o.state = 8; shake = 4;
@@ -621,6 +654,7 @@ function drawEnemy(e) {
   const x = Math.round(e.x), y = Math.round(e.y);
   ctx.drawImage(fr, x, y);
   if (e.kind === 'goon' && e.dir === 'down' && !(e.flash > 0 && e.flash % 2)) ctx.drawImage(GLASSES, x + 5, y + 4);
+  if (e.kind === 'chozen' && !(e.flash > 0 && e.flash % 2)) ctx.drawImage(HEADBAND, x + 4, y + 2);
   if (e.kind === 'ian') { // boss health bar
     ctx.fillStyle = '#000'; ctx.fillRect(x - 2, y - 5, 20, 4);
     ctx.fillStyle = '#e33'; ctx.fillRect(x - 1, y - 4, Math.round(18 * e.hp / e.maxhp), 2);
@@ -655,6 +689,15 @@ function drawObject(o) {
     ctx.fillStyle = '#5a3a1a'; ctx.fillRect(x + 2, y + 4, 12, 1); ctx.fillRect(x + 2, y + 11, 12, 1);
     ctx.fillStyle = '#a87a4a'; ctx.fillRect(x + 4, y + 1, 1, 14);
     if (o.state) { ctx.fillStyle = '#2a1a0a'; ctx.fillRect(x + 4, y + 2, 8, 2); if (o.item === 'haggis' || o.item === 'lasagna') { ctx.fillStyle = '#8f8'; ctx.fillRect(x + 6, y + 6, 4, 4); } }
+  } else if (o.kind === 'bonsai') {
+    const trim = o.trim || 0, wob = o.state > 1 ? (o.state % 2) : 0;
+    ctx.fillStyle = '#7a5230'; ctx.fillRect(x + 2, y + 12, 28, 4);
+    ctx.fillStyle = '#8a3a2a'; ctx.fillRect(x + 10, y + 6, 12, 6); ctx.fillStyle = '#a84a3a'; ctx.fillRect(x + 9, y + 5, 14, 2);
+    ctx.fillStyle = '#5a3a1a'; ctx.fillRect(x + 15 + wob, y - 2, 2, 8); ctx.fillRect(x + 12 + wob, y - 4, 4, 2); ctx.fillRect(x + 17 + wob, y - 7, 3, 2);
+    ctx.fillStyle = trim >= 6 ? '#3fa82a' : '#2e6b1e';
+    ctx.fillRect(x + 8 + wob, y - 7, 8, 4); ctx.fillRect(x + 16 + wob, y - 10, 9, 4); ctx.fillRect(x + 11 + wob, y - 1, 6, 2);
+    if (trim < 6) { ctx.fillStyle = '#6a8a3a'; ctx.fillRect(x + 4 + wob, y - 9, 3, 3); ctx.fillRect(x + 25 + wob, y - 4, 4, 3); ctx.fillRect(x + 19 + wob, y - 13, 3, 3); }
+    if (trim >= 6) { ctx.fillStyle = '#ffd700'; ctx.fillRect(x + 14, y + 8, 4, 3); }
   } else if (o.kind === 'tomb') {
     ctx.fillStyle = '#6a6e72'; ctx.fillRect(x, y + 2, 32, 14);
     ctx.fillStyle = '#9a9ea2'; ctx.fillRect(x + 2, y - 2, 28, 5);
@@ -673,7 +716,7 @@ function drawHUD() {
   ctx.fillStyle = '#333'; ctx.fillRect(0, HUD - 1, W, 1);
   for (let i = 0; i < 3; i++) ctx.drawImage(i < player.hp ? SPR.heart : SPR.heartOff, 4 + i * 9, 5);
   text(room.name, W / 2, 4, '#ffd700', 8, 'center');
-  text(clues + '/5', W - 4, 4, '#fff', 8, 'right');
+  text(clues + '/6', W - 4, 4, '#fff', 8, 'right');
 }
 function drawPopup() {
   const y = 24;
@@ -762,5 +805,5 @@ function loop(ts) {
 }
 if (document.fonts && document.fonts.load) document.fonts.load('8px "Press Start 2P"').catch(() => {});
 requestAnimationFrame(loop);
-window.__NT = { SPR, wrap, INTRO, JOKES, TREASURE_CARDS, get state() { return state; }, get room() { return roomId; }, get player() { return player; }, get enemies() { return enemies; }, get objects() { return objects.map(o => ({ kind: o.kind, item: o.item, state: o.state })); }, get hp() { return player && player.hp; }, get clues() { return clues; }, get dlg() { return dlg; }, get choice() { return choice; }, setKey, say, ROOMS };
+window.__NT = { SPR, wrap, INTRO, JOKES, TREASURE_CARDS, jump(id) { visited = new Set(); clues = 0; loadRoom(id); state = 'play'; }, get state() { return state; }, get room() { return roomId; }, get player() { return player; }, get enemies() { return enemies; }, get objects() { return objects.map(o => ({ kind: o.kind, item: o.item, state: o.state })); }, get hp() { return player && player.hp; }, get clues() { return clues; }, get dlg() { return dlg; }, get choice() { return choice; }, setKey, say, ROOMS };
 })();
